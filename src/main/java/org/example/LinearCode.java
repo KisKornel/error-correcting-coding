@@ -57,10 +57,15 @@ public class LinearCode {
         generatorMatrix = new DenseDoubleMatrix2D(rows,columns);
 
         for (int i = 0; i < rows; i++) {
+            LOGGER.info("Add meg a {}. sort (szóközzel elválasztva): ", i + 1);
+            String row = scan.nextLine();
+
+            int[] rowMatrix = Arrays.stream(row.split("\\s+"))
+                    .mapToInt(Integer::parseInt)
+                    .toArray();
+
             for (int j = 0; j < columns; j++) {
-                LOGGER.info("Add meg a {}. sor {}. elemét: ", i + 1, j + 1);
-                int value = scan.nextInt();
-                generatorMatrix.set(i,j,value);
+                generatorMatrix.setQuick(i, j, rowMatrix[j]);
             }
         }
 

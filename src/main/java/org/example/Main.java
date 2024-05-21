@@ -2,7 +2,6 @@ package org.example;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,54 +12,83 @@ public class Main {
     public static void main(String[] args) {
 
        Scanner scan = new Scanner(System.in);
-/*
-        LOGGER.info("Add meg a Z feletti számot:");
-        int zNum = scan.nextInt();
 
-        LOGGER.info("Add meg a mátrix sor számát:");
-        int rows = scan.nextInt();
+       LOGGER.info("Menu");
+       LOGGER.info("1 - Alfák kiszámítása");
+       LOGGER.info("2 - Lineáris kódszámítás");
+       LOGGER.info("3 - Hamming kódszámítás");
+       LOGGER.info("4 - Reed Solomon kódszámítás (elvileg ez nem kell)");
+       LOGGER.info("5 - 1 hibajavító kódszámítás");
+       LOGGER.info("Add meg a menüpont számát: ");
+       int num = Integer.parseInt(scan.nextLine());
 
-        LOGGER.info("Add meg a mátrix oszlop számát:");
-        int columns = scan.nextInt();
+       switch (num) {
+           case 1:
+               LOGGER.info("Add meg a Z feletti számot:");
+               int zNum = scan.nextInt();
 
-        List<Integer> allALphaList = primeFactors(zNum);
+               primeFactors(zNum);
 
-        linearCode(allALphaList, rows, columns, zNum);
+               break;
+           case 2:
+               LOGGER.info("Add meg a Z feletti számot:");
+               int zNum2 = scan.nextInt();
 
+               LOGGER.info("Add meg a mátrix sor számát:");
+               int rows = scan.nextInt();
 
-        LOGGER.info("Add meg a q elemszámát:");
-        int qNum = scan.nextInt();
+               LOGGER.info("Add meg a mátrix oszlop számát:");
+               int columns = scan.nextInt();
 
-        LOGGER.info("Add meg az r paraméter értékét:");
-        int rNum = scan.nextInt();
+               List<Integer> allALphaList = primeFactors(zNum2);
 
-        LOGGER.info("Add meg a k üzenetszó hosszát:");
-        int kNum = scan.nextInt();
+               linearCode(allALphaList, rows, columns, zNum2);
 
-        LOGGER.info("Add meg hány hibát akarsz javítani:");
-        int errCorrectionNum = scan.nextInt();
+               break;
+           case 3:
+               LOGGER.info("Add meg a q elemszámát:");
+               int qNum = scan.nextInt();
 
-        LOGGER.info("Add meg a Z feletti számot:");
-        int zNum = scan.nextInt();
+               LOGGER.info("Add meg az r paraméter értékét:");
+               int rNum = scan.nextInt();
 
-        List<Integer> allALphaList = primeFactors(zNum);
-        reedSalamonCode(allALphaList, kNum, errCorrectionNum, zNum);
-*/
-        LOGGER.info("Add meg a Z feletti számot:");
-        int zNum = Integer.parseInt(scan.nextLine());
+               List<Integer> allAlphaList2 = primeFactors(qNum);
+               hammingCode(allAlphaList2, qNum,rNum);
 
-        LOGGER.info("Add meg az alpha 1. lehetséges értékét (a polinomban az első x-a értékből következik általában):");
-        int alpha1 = Integer.parseInt(scan.nextLine());
+               break;
+           case 4:
+               LOGGER.info("Add meg a Z feletti számot:");
+               int zNum3 = scan.nextInt();
 
-        LOGGER.info("Add meg az alpha 2. lehetséges értékét (a polinomban az első x-a értékből következik általában):");
-        int alpha2 = Integer.parseInt(scan.nextLine());
+               LOGGER.info("Add meg a k üzenetszó hosszát:");
+               int kNum = scan.nextInt();
 
-        LOGGER.info("Add meg a vett jelet (szóközzel elválasztva):");
-        String receivedWord = scan.nextLine();
+               LOGGER.info("Add meg hány hibát akarsz javítani:");
+               int errCorrectionNum = scan.nextInt();
+
+               List<Integer> allAlphaList3 = primeFactors(zNum3);
+               reedSolomonCode(allAlphaList3, kNum, errCorrectionNum, zNum3);
+
+               break;
+           case 5:
+               LOGGER.info("Add meg a Z feletti számot:");
+               int zNum4 = Integer.parseInt(scan.nextLine());
+
+               LOGGER.info("Add meg az alpha értékét:");
+               int alpha = Integer.parseInt(scan.nextLine());
+
+               LOGGER.info("Add meg a vett jelet (szóközzel elválasztva):");
+               String receivedWord = scan.nextLine();
+
+               oneErrorCorrectionReedSolomonCode(zNum4, alpha, receivedWord);
+
+               break;
+           default:
+               LOGGER.info("Nincs ilyen menüpont!");
+               break;
+       }
 
         scan.close();
-
-        oneErrorCorrectionReedSolomonCode(zNum, alpha1, alpha2, receivedWord);
     }
 
     private static List<Integer> primeFactors(int zNum) {
@@ -106,11 +134,7 @@ public class Main {
         LOGGER.info("Parity matrix: {}", reedSolomonCode.getParityMatrix());
     }
 
-    private static void oneErrorCorrectionReedSolomonCode(int zNum, int alpha1, int alpha2, String receivedWord) {
-        int alpha = alpha1;
-        if(Math.pow(alpha1, 2) % zNum != alpha2) {
-            alpha = alpha2;
-        }
+    private static void oneErrorCorrectionReedSolomonCode(int zNum, int alpha, String receivedWord) {
 
         OneErrorCorrectionReedSolomonCode solomonCode = new OneErrorCorrectionReedSolomonCode(zNum, alpha, receivedWord);
         solomonCode.setReceivedSignal();
@@ -119,5 +143,7 @@ public class Main {
         solomonCode.errorLocation();
         solomonCode.errorValue();
         solomonCode.getCodeWord();
+
     }
+
 }

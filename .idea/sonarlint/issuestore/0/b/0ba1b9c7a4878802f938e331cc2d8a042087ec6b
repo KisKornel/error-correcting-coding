@@ -1,10 +1,3 @@
 
-}	java:S125"<This block of commented-out lines of code should be removed.(İ«8À¬œÅã1J$5e3b0d71-2fec-4786-b960-38768fb7904e
-t
-java:S1144B"1Remove this unused private "primeFactors" method.(‚ª€ÿ8Ê¬œÅã1J$c694f53a-2b79-4b1a-ad76-826e12cf9bb6
-r
-java:S1144U"/Remove this unused private "linearCode" method.(àŒœ¤8Ê¬œÅã1J$49bd4de0-c621-4d4b-a33a-dbafa190a329
-x
-java:S1144_"0Remove this unused private "hammingCode" method.(ÿ š¨øÿÿÿÿ8Ê¬œÅã1J$7e035fed-3aae-407d-99b6-60979e567e4f
-|
-java:S1144e"4Remove this unused private "reedSolomonCode" method.(‘ÀÕßşÿÿÿÿ8Ê¬œÅã1J$de56872a-89d6-423c-aa19-6d90c74cf817
+Ÿ
+java:S1192"]Define a constant instead of duplicating this literal "Add meg a Z feletti szÃ¡mot:" 4 times.(İ«8æÄâÒù1J$456f6509-bcb2-47b2-b728-b8b4966b4cc7

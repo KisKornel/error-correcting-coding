@@ -13,7 +13,7 @@ import java.util.List;
 public class OneErrorCorrectionReedSolomonCode {
     private static final Logger LOGGER = LoggerFactory.getLogger(OneErrorCorrectionReedSolomonCode.class);
     private final int zNum;
-    private int alpha;
+    private final int alpha;
     private final List<Integer> receivedSignal = new ArrayList<>();
     private final List<Integer> alphaPow = new ArrayList<>();
     private int s1;
@@ -67,6 +67,9 @@ public class OneErrorCorrectionReedSolomonCode {
 
         s1 = s1 % zNum;
         s2 = s2 % zNum;
+
+        LOGGER.info("S1: {}", s1);
+        LOGGER.info("S2: {}", s2);
     }
 
     public void errorLocation() {
@@ -74,28 +77,39 @@ public class OneErrorCorrectionReedSolomonCode {
         int s2Alpha = s2;
         int k = 2;
 
-        while (s1Alpha != 1) {
-            s1Alpha = (s1 * k) % zNum;
-            s2Alpha = (s2 * k) % zNum;
-            k++;
+        if (((double) s2Alpha / s1Alpha) == 1.0) {
+            LOGGER.info("A hiba helye az 1. helyen van");
+            errLoc = 0;
+        } else {
+            while (s1Alpha != 1) {
+                s1Alpha = (s1 * k) % zNum;
+                s2Alpha = (s2 * k) % zNum;
+                k++;
+            }
+
+            errLoc = alphaPow.indexOf(s2Alpha);
         }
 
-        errLoc = alphaPow.indexOf(s2Alpha);
     }
 
     public void errorValue() {
         int errV = 0;
         int k = 2;
 
-        while (errV != 1) {
-            errV = ((alphaPow.get(errLoc) * k) % zNum);
-            k++;
+        if (((double) s2 / s1) == 1.0) {
+            errValue = s1;
+
+        } else {
+            while (errV != 1) {
+                errV = ((alphaPow.get(errLoc) * k) % zNum);
+                k++;
+            }
+
+            errValue = (s1 * (k - 1) % zNum);
         }
 
-        errValue = (s1 * (k - 1) % zNum);
-
-        LOGGER.info("Error value: {}", errValue);
         LOGGER.info("Error location: {}", errLoc + 1);
+        LOGGER.info("Error value: {}", errValue);
     }
 
     public void getCodeWord() {
@@ -109,13 +123,7 @@ public class OneErrorCorrectionReedSolomonCode {
 
         DoubleMatrix1D eMatrix = new DenseDoubleMatrix1D(receivedSignal.size());
 
-        for (int i = 0; i < receivedSignal.size(); i++) {
-            if(i == errLoc + 1) {
-                eMatrix.setQuick(i, errValue);
-            } else {
-                eMatrix.setQuick( i, 0);
-            }
-        }
+        eMatrix.setQuick(errLoc + 1, errValue);
 
         LOGGER.info("eMatrix: {}", eMatrix);
 

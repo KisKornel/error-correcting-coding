@@ -176,7 +176,7 @@ public class HammingCode {
             msgWordMatrix.setQuick(0, i, msgWord[i]);
         }
 
-        LOGGER.info("msgWordMatrix: {}", msgWordMatrix);
+        LOGGER.info("Message word matrix: {}", msgWordMatrix);
         codeWord = algebra.mult(msgWordMatrix, generatorMatrix);
 
         for (int i = 0; i < codeWord.columns(); i++) {
@@ -240,7 +240,7 @@ public class HammingCode {
 
         for (int i = 0; i < getNValue(); i++) {
             List<Integer> list = setList.get(i);
-            LOGGER.info("setList {}. eleme: {}", i, list);
+            LOGGER.info("Kiválasztott {}. elem: {}", i + 1, list);
             int val1 = list.getFirst();
             int val2 = list.get(1);
 
