@@ -71,6 +71,7 @@ public class Main {
 
                break;
            case 5:
+
                LOGGER.info("Add meg a Z feletti számot:");
                int zNum4 = Integer.parseInt(scan.nextLine());
 
@@ -135,6 +136,7 @@ public class Main {
     }
 
     private static void oneErrorCorrectionReedSolomonCode(int zNum, int alpha, String receivedWord) {
+        primeFactors(zNum);
 
         OneErrorCorrectionReedSolomonCode solomonCode = new OneErrorCorrectionReedSolomonCode(zNum, alpha, receivedWord);
         solomonCode.setReceivedSignal();

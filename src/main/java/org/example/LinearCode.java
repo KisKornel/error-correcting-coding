@@ -124,10 +124,12 @@ public class LinearCode {
             }
 
             DoubleMatrix1D parityFirsRowMatrix = nonParityMatrix.viewRow(rowCount);
+            LOGGER.info("parityFirsRowMatrix: {}", parityFirsRowMatrix);
             int rowIndexValue = (int) nonParityMatrix.get(rowCount,columnCounter);
+            LOGGER.info("rowIndexValue: {}", rowIndexValue);
 
-            if(parityRowMatrix.get(columnCounter) == 1) {
-                modNum = ( rowIndexValue/ parityValue) * -1;
+            if(parityRowMatrix.get(columnCounter) == 1.0) {
+                modNum = ( rowIndexValue / parityValue) * -1;
             } else {
                 modNum = alphaRowValue(allAlphaList, parityValue, rowIndexValue) * -1;
             }
@@ -153,11 +155,11 @@ public class LinearCode {
         for (int j = 0; j < columns; j++) {
             int value;
 
-            if(parityRowMatrix.get(j) / parityValue == 0) {
+            if((parityRowMatrix.get(j) / parityValue) == 0.0) {
                 value = 0;
-            } else if(parityRowMatrix.get(j) / parityValue == 1) {
+            } else if(parityRowMatrix.get(j) / parityValue == 1.0) {
                 value = 1;
-            } else if (parityRowMatrix.get(j) % parityValue == 0) {
+            } else if (parityRowMatrix.get(j) % parityValue == 0.0) {
                 value = (int) (parityRowMatrix.get(j) / parityValue);
             } else {
                 value  = alphaRowValue(allAlphaList, parityValue, (int) parityRowMatrix.get(j));

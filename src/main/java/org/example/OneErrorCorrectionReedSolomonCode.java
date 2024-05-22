@@ -6,6 +6,7 @@ import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,13 +15,13 @@ public class OneErrorCorrectionReedSolomonCode {
     private static final Logger LOGGER = LoggerFactory.getLogger(OneErrorCorrectionReedSolomonCode.class);
     private final int zNum;
     private final int alpha;
-    private final List<Integer> receivedSignal = new ArrayList<>();
     private final List<Integer> alphaPow = new ArrayList<>();
+    private final String receivedWord;
+    private int[] codeWord;
     private int s1;
     private int s2;
     private int errLoc;
     private int errValue;
-    private final String receivedWord;
 
     public OneErrorCorrectionReedSolomonCode(int zNum, int alpha, String receivedWord) {
         this.zNum = zNum;
@@ -29,39 +30,37 @@ public class OneErrorCorrectionReedSolomonCode {
     }
 
     public void setReceivedSignal() {
-        int[] codeWord = Arrays.stream(receivedWord.split("\\s+"))
+        codeWord = Arrays.stream(receivedWord.split("\\s+"))
                 .mapToInt(Integer::parseInt)
                 .toArray();
-
-        for (int j : codeWord) {
-            receivedSignal.add(j);
-        }
-
     }
 
     public void setAlphaPow () {
-        int a = 0;
+        BigInteger base = new BigInteger(String.valueOf(alpha));
+        BigInteger result = BigInteger.valueOf(0);
+        BigInteger one = BigInteger.valueOf(1);
         int k = 1;
 
-        while (a != 1) {
-            a = (int) (Math.pow(alpha, k)) % zNum;
-            alphaPow.add(a);
+        while (!result.equals(one)) {
+            result = base.modPow(BigInteger.valueOf(k), BigInteger.valueOf(zNum));
+            LOGGER.info("a: {}", result);
+            alphaPow.add(result.intValue());
             k++;
         }
     }
 
     public void calculateS1AndS2() {
-        s1 = receivedSignal.getFirst();
-        s2 = receivedSignal.getFirst();
+        s1 = codeWord[0];
+        s2 = codeWord[0];
         LOGGER.info("alpha {}", alpha);
         LOGGER.info("alphaPow {}", alphaPow);
 
-        for(int i = 1; i < receivedSignal.size(); i++) {
-            if(receivedSignal.get(i) == 0) {
+        for(int i = 1; i < codeWord.length; i++) {
+            if(codeWord[i] == 0) {
                 continue;
             }
-            s1 += (receivedSignal.get(i) * alphaPow.get(i-1));
-            s2 += (int) (receivedSignal.get(i) * Math.pow(alphaPow.get(i-1), 2));
+            s1 += (codeWord[i] * alphaPow.get(i-1));
+            s2 += (int) (codeWord[i] * Math.pow(alphaPow.get(i-1), 2));
         }
 
 
@@ -86,7 +85,6 @@ public class OneErrorCorrectionReedSolomonCode {
                 s2Alpha = (s2 * k) % zNum;
                 k++;
             }
-
             errLoc = alphaPow.indexOf(s2Alpha);
         }
 
@@ -98,7 +96,6 @@ public class OneErrorCorrectionReedSolomonCode {
 
         if (((double) s2 / s1) == 1.0) {
             errValue = s1;
-
         } else {
             while (errV != 1) {
                 errV = ((alphaPow.get(errLoc) * k) % zNum);
@@ -113,23 +110,23 @@ public class OneErrorCorrectionReedSolomonCode {
     }
 
     public void getCodeWord() {
-        DoubleMatrix1D receivedCodeWord = new DenseDoubleMatrix1D(receivedSignal.size());
+        DoubleMatrix1D receivedCodeWord = new DenseDoubleMatrix1D(codeWord.length);
 
-        for (int i = 0; i < receivedSignal.size(); i++) {
-            receivedCodeWord.setQuick(i, receivedSignal.get(i));
+        for (int i = 0; i < codeWord.length; i++) {
+            receivedCodeWord.setQuick(i, codeWord[i]);
         }
 
         LOGGER.info("Received word: {}", receivedCodeWord);
 
-        DoubleMatrix1D eMatrix = new DenseDoubleMatrix1D(receivedSignal.size());
+        DoubleMatrix1D eMatrix = new DenseDoubleMatrix1D(codeWord.length);
 
         eMatrix.setQuick(errLoc + 1, errValue);
 
         LOGGER.info("eMatrix: {}", eMatrix);
 
-        DoubleMatrix1D codeWord = new DenseDoubleMatrix1D(receivedSignal.size());
+        DoubleMatrix1D codeWord2 = new DenseDoubleMatrix1D(codeWord.length);
 
-        for (int i = 0; i < receivedSignal.size(); i++) {
+        for (int i = 0; i < codeWord.length; i++) {
             int value = (int) (receivedCodeWord.getQuick( i) - eMatrix.getQuick( i));
             if (value < 0) {
                 while (value < 0) {
@@ -138,10 +135,10 @@ public class OneErrorCorrectionReedSolomonCode {
             } else {
                 value = value % zNum;
             }
-            codeWord.setQuick( i, value);
+            codeWord2.setQuick( i, value);
         }
 
-       LOGGER.info("Code Word: {}", codeWord);
+       LOGGER.info("Code Word: {}", codeWord2);
     }
 
 }
