@@ -124,14 +124,15 @@ public class LinearCode {
             }
 
             DoubleMatrix1D parityFirsRowMatrix = nonParityMatrix.viewRow(rowCount);
-            LOGGER.info("parityFirsRowMatrix: {}", parityFirsRowMatrix);
             int rowIndexValue = (int) nonParityMatrix.get(rowCount,columnCounter);
-            LOGGER.info("rowIndexValue: {}", rowIndexValue);
 
-            if(parityRowMatrix.get(columnCounter) == 1.0) {
+            if(rowIndexValue == 0) {
+                modNum = 0;
+            } else if (parityRowMatrix.get(columnCounter) == 1) {
                 modNum = ( rowIndexValue / parityValue) * -1;
             } else {
                 modNum = alphaRowValue(allAlphaList, parityValue, rowIndexValue) * -1;
+                LOGGER.info("Row modNum: {}", modNum);
             }
 
             while (modNum < 0) {
@@ -155,14 +156,15 @@ public class LinearCode {
         for (int j = 0; j < columns; j++) {
             int value;
 
-            if((parityRowMatrix.get(j) / parityValue) == 0.0) {
+            LOGGER.info("Parity Row Matrix: {}", parityRowMatrix);
+
+            if((parityRowMatrix.get(j) / parityValue) == 0) {
                 value = 0;
-            } else if(parityRowMatrix.get(j) / parityValue == 1.0) {
+            } else if(parityRowMatrix.get(j) / parityValue == 1) {
                 value = 1;
-            } else if (parityRowMatrix.get(j) % parityValue == 0.0) {
-                value = (int) (parityRowMatrix.get(j) / parityValue);
             } else {
                 value  = alphaRowValue(allAlphaList, parityValue, (int) parityRowMatrix.get(j));
+                LOGGER.info("Alpha row value: {}", value);
             }
 
             generatorMatrix.set(rowCounter, j, value);
@@ -182,23 +184,33 @@ public class LinearCode {
     }
 
     private int alphaRowValue(List<Integer> allAlpha, int parityItem, int nonParityItem) {
-        int alphaIndex;
         int pIndex = allAlpha.indexOf(parityItem);
         int npIndex = allAlpha.indexOf(nonParityItem);
+        LOGGER.info("pIndex: {}", pIndex);
+        LOGGER.info("npIndex: {}", npIndex);
+
+        LOGGER.info("parityItem: {}", parityItem);
+        LOGGER.info("nonParityItem: {}", nonParityItem);
 
         if (npIndex < pIndex) {
-            pIndex -= npIndex;
-            npIndex = allAlpha.indexOf(1);
+            int k = 2;
+            int result = 0;
+
+            while (result != 1) {
+                result = (parityItem * k) % zNum;
+
+
+                if(result != 1) {
+                    k++;
+                }
+            }
+
+            LOGGER.info("k: {}", k);
+
+            return (nonParityItem * k) % zNum;
         }
 
-        alphaIndex = npIndex - pIndex;
-
-        if (alphaIndex < 0) {
-           LOGGER.error("Alpha index error: {}", alphaIndex);
-           return -1;
-        }
-
-        return allAlpha.get(alphaIndex);
+        return allAlpha.get(npIndex - pIndex - 1);
     }
 
     public void setPivotTableFull() {
