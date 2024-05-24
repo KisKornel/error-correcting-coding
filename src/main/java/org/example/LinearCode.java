@@ -186,11 +186,6 @@ public class LinearCode {
     private int alphaRowValue(List<Integer> allAlpha, int parityItem, int nonParityItem) {
         int pIndex = allAlpha.indexOf(parityItem);
         int npIndex = allAlpha.indexOf(nonParityItem);
-        LOGGER.info("pIndex: {}", pIndex);
-        LOGGER.info("npIndex: {}", npIndex);
-
-        LOGGER.info("parityItem: {}", parityItem);
-        LOGGER.info("nonParityItem: {}", nonParityItem);
 
         if (npIndex < pIndex) {
             int k = 2;
@@ -204,8 +199,6 @@ public class LinearCode {
                     k++;
                 }
             }
-
-            LOGGER.info("k: {}", k);
 
             return (nonParityItem * k) % zNum;
         }
