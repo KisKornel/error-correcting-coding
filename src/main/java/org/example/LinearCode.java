@@ -132,7 +132,6 @@ public class LinearCode {
                 modNum = ( rowIndexValue / parityValue) * -1;
             } else {
                 modNum = alphaRowValue(allAlphaList, parityValue, rowIndexValue) * -1;
-                LOGGER.info("Row modNum: {}", modNum);
             }
 
             while (modNum < 0) {
@@ -156,15 +155,12 @@ public class LinearCode {
         for (int j = 0; j < columns; j++) {
             int value;
 
-            LOGGER.info("Parity Row Matrix: {}", parityRowMatrix);
-
             if((parityRowMatrix.get(j) / parityValue) == 0) {
                 value = 0;
             } else if(parityRowMatrix.get(j) / parityValue == 1) {
                 value = 1;
             } else {
                 value  = alphaRowValue(allAlphaList, parityValue, (int) parityRowMatrix.get(j));
-                LOGGER.info("Alpha row value: {}", value);
             }
 
             generatorMatrix.set(rowCounter, j, value);
